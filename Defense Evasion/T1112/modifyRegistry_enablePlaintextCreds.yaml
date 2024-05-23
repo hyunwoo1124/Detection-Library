@@ -1,0 +1,25 @@
+title: ModifyRegistry EnablePlaintextCreds
+id: 6bab1e10-88d7-419d-9d06-4a4bbfdbab59
+status: experimental
+description: Detects potential malicious modification of the property value of Use LogonCredential to enable  clear-text credentials
+references:
+    - https://github.com/hyunwoo1124/Detection-Library.git
+    - Roberto Rodriguez (Cyb3rWard0g) T1112 detection
+author: Hyun Woo Kim
+date: 2024/05/23
+tags:
+    - attack.defense_evasion
+    - attack.t1112
+logsource:
+    category: registry_set
+    product: windows
+detection:
+    selection_registry:
+        TargetObject|endswith: 'WDigest\UserLogonCredential'
+    selection_value:
+        - Details: "1" # MDE has a separate value that provides previous and current value. Update the rule according to your SIEM
+        - Details: "0"
+    condition: all of selection_*
+falsepositives:
+    - Unknown
+level: high
