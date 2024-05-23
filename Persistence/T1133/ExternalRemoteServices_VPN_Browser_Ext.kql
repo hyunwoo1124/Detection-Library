@@ -1,4 +1,4 @@
-//AUTHOR: Hyun Woo Kim, DeepSeas, Threat Detection Engineer
+//AUTHOR: Hyun Woo Kim
 //SUBJECT: This query detects remote services installed on browser extension that can be used for initial access or persistence
 //False Positives: Low
 //Confidence Level: High
