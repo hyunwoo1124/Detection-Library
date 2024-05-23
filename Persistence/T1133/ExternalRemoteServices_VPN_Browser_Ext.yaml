@@ -1,0 +1,21 @@
+title: ExternalRemoteServices VPN Browser Ext Detected
+id: c8f2ab0f-3214-48ef-9f71-b1b461cee877
+status: experimental
+description: Detects Chrome or Edge Browser with VPN services installed
+references:
+    - 
+author: Hyun Woo Kim
+date: 2024/05/23
+tags:
+    - 
+logsource:
+    category: antivirus
+    product: aws
+    service: activitylogs
+detection:
+    selection:
+        
+    condition: selection
+falsepositives:
+    - Unknown
+level: critical
