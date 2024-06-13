@@ -1,0 +1,23 @@
+//Author: Hyun Woo Kim, Threat Detection Engineer, DeepSeas 
+
+//Description: Identifies cml and powershell cmd to disable ProcessCreationIncludeCmdLine_Enabled to hide suspicious commands. This detection code will identify on both CML and Powershell 
+
+//False Positives: Low 
+
+//Confidence Level: High 
+
+//Note: REG_DWORD /d 0 means that the actor disabled logging and /d 1 is a clean up flag to re-enable logging.  
+
+DeviceProcessEvents 
+
+| where ActionType == "ProcessCreated" 
+
+| where FileName == "reg.exe" 
+
+| where InitiatingProcessFileName in~ ("powershell.exe", "cmd.exe") 
+
+| where ProcessCommandLine contains "ProcessCreationIncludeCmdLine_Enabled" and ProcessCommandLine contains "REG_DWORD " 
+
+| project Timestamp, DeviceId, DeviceName, FileName, FolderPath, SHA256, ProcessCommandLine, AccountDomain, AccountName, AccountSid, AccountUpn, LogonId, InitiatingProcessAccountDomain, InitiatingProcessAccountName, ReportId 
+
+ 

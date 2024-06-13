@@ -1,0 +1,15 @@
+// Author: Hyun Woo Kim 
+
+// Title: Threat Detection Engineer, Professional Services, DeepSeas 
+
+// Date: 4/23/2024 
+
+// MITRE: T1112 Modify Registry 
+
+// TITLE: T1112 Modify Registry - creds stored in plaintext 
+
+// Description: Sets registry key using Powershell that will tell windows to store plaintext passwords (making the system vulnerable to clear text / cleartext password dumping). 
+
+DeviceRegistryEvents 
+
+| where RegistryKey endswith "WDigest\\UseLogonCredential" and RegistryValueData in~("1","0") 

@@ -1,0 +1,51 @@
+title: Protocol Tunneling Plink
+id: 1adb1e95-9a88-4fff-8ddb-95033628b3b1
+status: experimental
+description: Detects Plink and ngrok to perform data exfiltration and tunneling to avoid detection
+references: 
+author: Hyun Woo Kim
+date: 2024/06/10
+tags:
+    - attack.t1572
+    - attack.exfiltration
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    selection_plink1:
+        Image|endswith: '\plink.exe'
+        CommandLine|contains: ":127.0.0.1:3389"
+    selection_plink2:
+        Image|endswith: '\plink.exe'
+        CommandLine|contains: ':3389'
+    selection_plink2port:
+        CommandLine|contains:
+            - ' -p 443'
+            - ' -p 22'
+    selection_grok_1:
+        CommandLine|contains:
+            - ' tcp 139'
+            - ' tcp 445'
+            - ' tcp 3389'
+            - ' tcp 5985'
+            - ' tcp 5986'
+    selection_grok_2:
+        CommandLine|contains|all:
+            - ' start '
+            - '--all'
+            - '--config'
+            - '.yml'
+    selection_grok_3:
+        Image|endswith: 'ngrok.exe'
+        CommandLine|contains:
+            -  ' tcp '
+            -  ' http '
+            -  ' authtoken '
+    selection_grok_4:
+        CommandLine|contains:
+            - '.exe authtoken '
+            - '.exe start --all'
+    condition: (1 of selection_plink1 or all of selection_plink2*) or (1 of selection_grok*)
+falsepositives:
+    - Unknown
+level: high

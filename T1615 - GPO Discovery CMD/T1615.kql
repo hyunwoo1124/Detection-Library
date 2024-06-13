@@ -1,0 +1,31 @@
+//Author: Hyun Woo Kim 
+
+//Date: 4/30/2024 
+
+//Title: Threat Detection Engineer, Professional Services 
+
+//Description: Detects Group Policy Discovery cmds as well as PowerView and WinPwn 
+
+let cmds = DeviceProcessEvents 
+
+| where (ProcessVersionInfoOriginalFileName in~ ("powershell.exe", "cmd.exe")) and ((ProcessCommandLine contains "gpresult" or ProcessCommandLine contains "Get-DomainGPO" or ProcessCommandLine contains "GPOAudit" or ProcessCommandLine contains "-consoleoutput" or ProcessCommandLine contains "RemoteAccessPolicy")) 
+
+| project Timestamp, DeviceId, DeviceName, ActionType, FileName, FolderPath, SHA256, FileSize, ProcessId, ProcessCommandLine, ProcessCreationTime, AccountName, AccountSid, AccountUpn, InitiatingProcessAccountName, ReportId; 
+
+let ps = DeviceEvents 
+
+| where ActionType == "PowerShellCommand" 
+
+| where AdditionalFields contains "Get-DomainGPO" or AdditionalFields contains "GPOAudit" or AdditionalFields contains "-consoleoutput" or AdditionalFields contains "GPORemoteAccessPolicy" or AdditionalFields contains "Get-GPO -Domain" 
+
+| where isnotnull(InitiatingProcessSHA256) and isnotempty(InitiatingProcessSHA256) 
+
+| where InitiatingProcessParentFileName != "SenseIR.exe" 
+
+| project Timestamp, DeviceId, DeviceName, ActionType, InitiatingProcessSHA256,InitiatingProcessFileSize,InitiatingProcessId, InitiatingProcessFileName, InitiatingProcessFolderPath, InitiatingProcessCreationTime, InitiatingProcessAccountDomain, InitiatingProcessAccountName, InitiatingProcessAccountSid, InitiatingProcessAccountUpn, AdditionalFields, ReportId; 
+
+union cmds, (ps | project-rename SHA256=InitiatingProcessSHA256,FileName=InitiatingProcessFileName,FolderPath=InitiatingProcessFolderPath, FileSize=InitiatingProcessFileSize,ProcessId=InitiatingProcessId, ProcessCommandLine=AdditionalFields, ProcessCreationTime =InitiatingProcessCreationTime, AccountName=InitiatingProcessAccountName, AccountSid=InitiatingProcessAccountSid, AccountUpn=InitiatingProcessAccountUpn) 
+
+ 
+
+ 

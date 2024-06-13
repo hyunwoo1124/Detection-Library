@@ -1,0 +1,43 @@
+title: Detect Network Discovery tools and cmds
+id: 19371db8-deec-4b1a-9790-6cd18c982019
+status: experimental
+description: Detects Network Discovery cmds from CommandLine, Powershell, PowerView, WinPwn
+references:
+    - https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1135/T1135.md#atomic-test-1---network-share-discovery
+    - https://dmcxblue.gitbook.io/red-team-notes-2-0/red-team-techniques/discovery/t1135-network-share-discovery
+    - https://github.com/mdecrevoisier/SIGMA-detection-rules/blob/main/windows-os/win-os-share%20discovery%20(command).yaml
+author: Hyun Woo Kim
+date: 2024/03/18
+tags:
+    - attack.t1135
+logsource:
+    category: process_creation
+    product: windows
+    service: security
+detection:
+    selectiondefault:
+        - OriginalFileName:
+            - 'powershell.exe'
+            - 'cmd.exe'
+            - 'net.exe'
+            - 'net1.exe'
+    selection_cmd:
+        - CommandLine|contains:
+            - '"net.exe" view'
+            - '"net.exe" share'
+    selection_ps:
+        - CommandLine|contains:
+            - 'get-smbshare'
+    selection_powerview_:
+        - CommandLine|contains:
+            - 'Find-DomainShare -CheckShareAccess'
+            - 'Invoke-ShareFinder'
+    selection_share_enum:
+        - CommandLine|contains:
+            - 'shareenumeration'
+        - EventType|contains:
+            - 'powershell'
+    condition:  selectiondefault and 1 of selection_*
+falsepositives:
+    - Unknown
+level: medium

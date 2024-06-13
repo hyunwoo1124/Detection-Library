@@ -1,0 +1,33 @@
+title: Lateral Transfer using QUIC
+id: f8e0ea11-5457-473d-9f7a-68bb621f4b08
+status: test
+description: Detects lateral transfer using QUIC
+references:
+    - https://atomicredteam.io/lateral-movement/T1570/
+author: Hyun Woo Kim
+date: 2024/06/04
+tags:
+    - attack.t1570
+    - attack.lateral_movement
+logsource:
+    category: process_creation
+    product: windows
+    service: security
+detection:
+    selection_SMB_over_QUIC:
+        CommandLine|contains:
+            - 'New-SmbMapping'
+            - '-RemotePath'
+            - 'NET USE'
+    selection_transportType:
+        CommandLine|contains:
+            - '-TransportType QUIC'
+            - '/TRANSPORT:QUIC'
+    selection_skipcert:
+        CommandLine|contains: 
+            - '/SKIPCERTCHECK'
+            - '-SkipCertificateCheck'
+    condition: all of selection*
+falsepositives:
+    - Unknown
+level: critical

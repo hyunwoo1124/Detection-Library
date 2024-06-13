@@ -1,0 +1,37 @@
+title: Modifyregstartup
+id: 77871b1c-04e1-483c-b596-c3a3e72d9436
+status: test
+description: Detects modification of the startup key to a path where payload could be stored during startup. Detects possible persistence using RUN key for windows Explorer and pointing to a suspicious folder
+references:
+    - https://detection.fyi/sigmahq/sigma/windows/registry/registry_set/registry_set_susp_user_shell_folders/?query=t1547.001
+    - https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1547.001/T1547.001.md
+    - https://researchcenter.paloaltonetworks.com/2018/07/unit42-upatre-continues-evolve-new-anti-analysis-techniques/
+    - Florian Roth (Nextron Systems), inspired by his detections
+author: Hyun Woo Kim
+date: 2024/05/30
+tags:
+    - attack.persistence
+    - attack.privilege_escalation
+    - attack.t1547.001
+logsource:
+    category: registry_set
+    product: windows
+    service: activitylogs
+detection:
+    user_shell_startup_selection:
+        TargetObject|contains: 'SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders'
+        TargetObject|endswith: 'Startup' # cover Common Startup and Startup
+    sus_runkey_persistence_explorer_selection:
+        TargetObject|endswith: '\Microsoft\Windows\CurrentVersion\Policies\Explorer\Run'
+        Details|contains:
+            - ':\$Recycle.bin\'
+            - ':\ProgramData\'
+            - ':\Temp\'
+            - ':\Users\Default\'
+            - ':\Users\Public\'
+            - ':\Windows\Temp\'
+            - ':\AppData\Local\Temp\'
+    condition: 1 of *_selection
+falsepositives:
+    - Unknown
+level: high

@@ -1,0 +1,2 @@
+DeviceProcessEvents 
+| where ProcessCommandLine contains ".decode('base64')" or ProcessCommandLine contains "base64 --decode" or ProcessCommandLine contains ".decode64(" or ProcessCommandLine contains "Base64String"
