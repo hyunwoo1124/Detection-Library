@@ -1,4 +1,4 @@
-//Author: Hyun Woo Kim, Threat Detection Engineer, DeepSeas 
+//Author: Hyun Woo Kim, Threat Detection Engineer
 
 //Description: Identifies cml and powershell cmd to disable ProcessCreationIncludeCmdLine_Enabled to hide suspicious commands. This detection code will identify on both CML and Powershell 
 

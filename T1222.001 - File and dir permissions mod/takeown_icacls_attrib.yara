@@ -31,29 +31,10 @@ detection:
             - \SAP
     filter2:
         SourceImage|contains:
-            - 'Jabra'
-            - 'smartstandbycomponent'
-            - '\common files\adobe'
-            - '\code.exe'
-            - 'codesetup'
-            - 'Lenovo Group'
-            - 'aws replication agent'
-            - '\zebra'
-            - '\draw.io'
-            - '\sgx_pxw'
-            - '\adobe\adobe *'
+            - 'yourfilterhere'
     filter3:
         CommandLine|contains:
-            - '\Lenovo'
-            - '\Hive Streaming'
-            - 'splunkuniversal'
-            - '\barista'
-            - '\Mandatory_Profile'
-            - '\Merck_QChecker'
-            - '\IntelSGXPSW'
-            - '\Program Files\PIPC'
-            - '\Program Files (x86)\PIPC'
-            - '\AnypointStudio'
+            - 'your filter here'
     condition: (all of selection*) and not (filter1 or filter2 or filter3)
 falsepositives:
     - Unknown
